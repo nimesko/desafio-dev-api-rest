@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  api:
+    restart: on-failure
+    build:
+      dockerfile: Dockerfile.api
+      context: .
+    ports:
+      - '8080:8080'
+    environment:
+      API_PORT: ${API_PORT}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_HOST: database
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+    depends_on:
+      - database
+  database:
+    build:
+      dockerfile: Dockerfile.database
+      context: .
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+volumes:
+  db_data: {}
